@@ -16,7 +16,7 @@ button,input,select{font:inherit}
 .goal-link{font-size:12px;opacity:.92;cursor:pointer;align-self:flex-start}
 .big{font-size:34px;font-weight:800}
 .progress-wrap{display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px;margin-bottom:10px}
-.progress-row{display:grid;grid-template-columns:56px 1fr 58px;gap:8px;align-items:center;font-size:12px}.progress-bar{height:8px;background:rgba(255,255,255,.2);border-radius:999px;overflow:hidden}.progress-fill{height:100%;background:rgba(255,255,255,.92);border-radius:999px}
+.progress-row{display:grid;grid-template-columns:62px 1fr 54px;gap:4px;align-items:center;font-size:13px}.progress-bar{height:8px;background:rgba(255,255,255,.2);border-radius:999px;overflow:hidden}.progress-fill{height:100%;background:rgba(255,255,255,.92);border-radius:999px}
 .kgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
 .kcard{background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:9px 8px;text-align:center}
 .kcard .l{font-size:12px;opacity:.92}.kcard .v{font-size:16px;font-weight:800;margin-top:4px}
@@ -26,11 +26,11 @@ button,input,select{font:inherit}
 .meal{padding:12px 12px 14px;margin-bottom:10px;min-height:148px;display:flex;flex-direction:column}
 .meal.drag-over{outline:2px solid var(--pri);background:#f7f9ff}
 .meal-title{font-size:17px;font-weight:800;margin-bottom:6px}
-.meal-meta{font-size:12px;color:var(--sub);line-height:1.25;display:grid;grid-template-columns:1fr 1fr;gap:1px 10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.meal-meta{font-size:13px;color:var(--sub);line-height:1.2;display:grid;grid-template-columns:1fr 1fr;gap:1px 10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 .drop-area{flex:1;display:flex;align-items:flex-start;padding-top:10px;min-height:86px}
 .chips{display:flex;flex-wrap:wrap;gap:2px 5px;align-content:flex-start;width:100%}
 .chip{display:inline-flex;align-items:center;gap:3px;background:rgba(255,255,255,.55);border:none;border-radius:999px;padding:4px 8px;max-width:100%}
-.chip .name{font-weight:400;font-size:12px;color:#344054;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip .name{font-weight:700;font-size:12px;color:#344054;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .chip .qty{border:none;background:transparent !important;appearance:none;-webkit-appearance:none;border-radius:0;padding:0;font-weight:400;font-size:12px;color:#4f64b4;box-shadow:none;outline:none;text-decoration:none;white-space:nowrap;flex-shrink:0}
 .chip .del{display:none}
 .empty{padding:26px 12px;border:none;border-radius:16px;width:100%;min-height:70px;display:flex;align-items:center;justify-content:center;color:#c0c6d4;font-size:12px;text-align:center}
@@ -45,7 +45,7 @@ button,input,select{font:inherit}
 .cat-tab{border:none;background:#f4f1ff;color:#5a45d6;border-radius:14px;padding:10px 16px;font-weight:700;box-shadow:inset 0 0 0 1px #ddd6fe}
 .cat-tab.active{background:#6d5efc;color:#fff;box-shadow:none}
 .list{display:flex;flex-wrap:wrap;gap:8px;min-height:220px;align-content:flex-start}
-.food{border:none;background:#eef2f9;color:#1f2937;border-radius:999px;padding:10px 12px;font-weight:400;font-size:12px;display:flex;align-items:center;gap:6px}
+.food{border:1px solid #d8deeb;background:#eef2f9;color:#1f2937;border-radius:12px;padding:10px 12px;font-weight:400;font-size:12px;display:flex;align-items:center;gap:6px;box-shadow:0 1px 0 rgba(255,255,255,.65) inset}
 .food.used{opacity:.6}
 .food .info{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#dce3f5;color:#5e6a87;font-size:11px}
 .sheet{position:fixed;inset:0;background:rgba(15,23,42,.28);display:none;align-items:flex-end;justify-content:center;z-index:30}
@@ -119,9 +119,43 @@ button,input,select{font:inherit}
     <div class="panel">
       <div class="phead">
         <div class="ptitle">食物详情</div>
-        <button class="close" onclick="closeSheet('detailSheet')">关闭</button>
+        <div style="display:flex;gap:8px;align-items:center"><button class="close" onclick="editFoodFromDetail()">修改</button><button class="close" onclick="closeSheet('detailSheet')">关闭</button></div>
       </div>
       <div id="detailLines" class="detail-lines"></div>
+    </div>
+  </div>
+
+
+  <div id="editFoodSheet" class="sheet">
+    <div class="panel">
+      <div class="phead">
+        <div class="ptitle">修改食物</div>
+        <button class="close" onclick="closeSheet('editFoodSheet')">关闭</button>
+      </div>
+      <div class="edit" style="grid-template-columns:1fr 1fr;align-items:stretch">
+        <input id="editFoodName" placeholder="食物名称">
+        <select id="editFoodCat"></select>
+        <input id="editBaseQty" type="number" min="0" placeholder="基础数量">
+        <select id="editBaseUnit">
+          <option>g</option><option>ml</option><option>个</option><option>颗</option><option>根</option><option>盘</option><option>斤</option><option>袋</option><option>包</option><option>盒</option><option>碟</option><option>份</option><option>片</option><option>把</option><option>只</option>
+        </select>
+        <input id="editGI" type="number" min="0" placeholder="GI值">
+        <input id="editUnitWeight" type="number" min="0" placeholder="单位重量(克)">
+        <input id="editKJ" type="number" min="0" step="0.1" placeholder="热量(kJ)">
+        <input id="editProtein" type="number" min="0" step="0.1" placeholder="蛋白质(g)">
+        <input id="editFat" type="number" min="0" step="0.1" placeholder="脂肪(g)">
+        <input id="editCarb" type="number" min="0" step="0.1" placeholder="碳水(g)">
+      </div>
+      <div style="margin-top:10px;display:grid;gap:10px">
+        <input id="editIngredients" placeholder="配料">
+        <input id="editRemark" placeholder="备注">
+      </div>
+      <div class="bottom-actions">
+        <div class="row2">
+          <button class="btn btn-danger" onclick="deleteFoodFromEdit()">删除</button>
+          <button class="btn btn-pri" onclick="saveEditFood()">保存</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -212,6 +246,7 @@ const STORAGE = 'diet-mobile-drag-v5-3';
 let editing = null;
 let drag = null;
 let currentCat = categories[0];
+let detailFoodName = '';
 
 function $(id){return document.getElementById(id)}
 function safeParse(v, fb){try{return JSON.parse(v)||fb}catch{return fb}}
@@ -327,7 +362,7 @@ function renderFoods(){
 function renderAll(){renderTop();renderMeals();renderCatTabs();renderFoods()}
 
 function closeSheet(id){$(id).classList.remove('show')}
-function openDetail(name){
+function openDetail(name){detailFoodName = name;
   const f=getFood(name);
   const lines = [
     ['食物名称', f.name],
@@ -357,6 +392,78 @@ function mealFromPoint(x,y){const el=document.elementFromPoint(x,y);const card=e
 function moveGhost(x,y){$('ghost').style.left=x+'px';$('ghost').style.top=y+'px';clearHighlights();const meal=mealFromPoint(x,y);if(meal){const card=document.querySelector(`.meal[data-meal="${meal}"]`);if(card)card.classList.add('drag-over')}}
 function startDrag(btn, touch){const name=btn.dataset.food;drag={name,btn};$('ghost').textContent=name;$('ghost').style.display='block';moveGhost(touch.clientX, touch.clientY)}
 function endDrag(x,y){if(!drag)return;const meal=mealFromPoint(x,y);$('ghost').style.display='none';clearHighlights();const name=drag.name;drag=null;if(meal)addToMeal(name, meal)}
+
+
+function editFoodFromDetail(){
+  const name = detailFoodName;
+  if(!name || !lookup[name]) return;
+  const f = getFood(name);
+  $('editFoodName').value = f.name || '';
+  $('editFoodCat').innerHTML = categories.map(c=>`<option value="${c}">${c}</option>`).join('');
+  $('editFoodCat').value = catOf(name);
+  $('editBaseQty').value = f.baseQty || 100;
+  $('editBaseUnit').value = f.unit || 'g';
+  $('editGI').value = f.gi || 0;
+  $('editUnitWeight').value = f.unitWeight || f.baseQty || 100;
+  $('editKJ').value = f.nutrition?.kj || 0;
+  $('editProtein').value = f.nutrition?.protein || 0;
+  $('editFat').value = f.nutrition?.fat || 0;
+  $('editCarb').value = f.nutrition?.carb || 0;
+  $('editIngredients').value = f.ingredients || '';
+  $('editRemark').value = f.remark || '';
+  closeSheet('detailSheet');
+  $('editFoodSheet').classList.add('show');
+}
+function saveEditFood(){
+  const oldName = detailFoodName;
+  if(!oldName || !lookup[oldName]) return;
+  const newName = ($('editFoodName').value || '').trim();
+  const newCat = $('editFoodCat').value;
+  if(!newName){ toast('请输入食物名称'); return; }
+  const oldCat = catOf(oldName);
+  const oldItem = lookup[oldName];
+  DB[oldCat] = DB[oldCat].filter(x => x.name !== oldName);
+  const newItem = {
+    name:newName,
+    baseQty:Number($('editBaseQty').value)||100,
+    unit:$('editBaseUnit').value||'g',
+    unitWeight:Number($('editUnitWeight').value)||100,
+    gi:Number($('editGI').value)||0,
+    ingredients:($('editIngredients').value||'').trim(),
+    remark:($('editRemark').value||'').trim(),
+    nutrition:{
+      kj:Number($('editKJ').value)||0,
+      protein:Number($('editProtein').value)||0,
+      fat:Number($('editFat').value)||0,
+      carb:Number($('editCarb').value)||0
+    },
+    weights: oldItem.weights || {}
+  };
+  DB[newCat].unshift(newItem);
+  meals.forEach(m=>{
+    state.mealPlan[m].forEach(it=>{ if(it.name===oldName) it.name = newName; });
+  });
+  rebuildLookup();
+  detailFoodName = newName;
+  persist();
+  renderAll();
+  closeSheet('editFoodSheet');
+  toast('已保存');
+}
+function deleteFoodFromEdit(){
+  const oldName = detailFoodName;
+  if(!oldName || !lookup[oldName]) return;
+  const oldCat = catOf(oldName);
+  DB[oldCat] = DB[oldCat].filter(x => x.name !== oldName);
+  meals.forEach(m=>{
+    state.mealPlan[m] = state.mealPlan[m].filter(it => it.name !== oldName);
+  });
+  rebuildLookup();
+  persist();
+  renderAll();
+  closeSheet('editFoodSheet');
+  toast('已删除');
+}
 
 function bindFoodInteractions(){
   document.querySelectorAll('.food').forEach(btn=>{
