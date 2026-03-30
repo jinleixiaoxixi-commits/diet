@@ -16,11 +16,11 @@ button,input,select{font:inherit}
 .goal-link{font-size:12px;opacity:.92;cursor:pointer;align-self:flex-start}
 .big{font-size:34px;font-weight:800}
 .progress-wrap{display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px;margin-bottom:10px}
-.progress-row{display:grid;grid-template-columns:56px 1fr 58px;gap:8px;align-items:center;font-size:12px}.progress-bar{height:8px;background:rgba(255,255,255,.2);border-radius:999px;overflow:hidden}.progress-fill{height:100%;background:rgba(255,255,255,.92);border-radius:999px}
+.progress-row{display:grid;grid-template-columns:60px minmax(0,1fr) 86px;gap:2px;align-items:center;font-size:17px}.progress-row > span:first-child{font-weight:400}.progress-row > span:last-child{text-align:right;font-size:15px;white-space:nowrap}.progress-bar{height:8px;background:rgba(255,255,255,.2);border-radius:999px;overflow:hidden;margin-left:-10px;margin-right:6px}.progress-fill{height:100%;background:rgba(255,255,255,.92);border-radius:999px}
 .kgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
 .kcard{background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:9px 8px;text-align:center}
 .kcard .l{font-size:12px;opacity:.92}.kcard .v{font-size:16px;font-weight:800;margin-top:4px}
-.stage{display:grid;grid-template-columns:1fr;gap:12px;align-items:start}
+.stage{display:grid;grid-template-columns:1.08fr .92fr;gap:12px;align-items:start}
 .card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow)}
 .col{min-height:60vh}
 .meal{padding:12px 12px 14px;margin-bottom:10px;min-height:148px;display:flex;flex-direction:column}
@@ -71,12 +71,7 @@ button,input,select{font:inherit}
 .ghost{position:fixed;left:0;top:0;transform:translate(-50%,-50%);pointer-events:none;z-index:999;background:#5b6cff;color:#fff;padding:10px 12px;border-radius:999px;font-weight:800;box-shadow:0 14px 28px rgba(48,67,170,.28);display:none}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:rgba(15,23,42,.86);color:#fff;padding:10px 14px;border-radius:999px;font-size:13px;display:none;z-index:1000}
 @media (max-width:760px){
-  .stage{grid-template-columns:1fr;gap:10px}
-  .meal{min-height:162px}
-  .meal-title{font-size:16px}
-  .meal-meta{font-size:12px}
-  .detail-line{grid-template-columns:84px 1fr;font-size:14px}
-}
+  .stage{grid-template-columns:1fr 1fr;gap:10px}
   .meal{min-height:162px}
   .meal-title{font-size:16px}
   .meal-meta{font-size:10px}
@@ -85,7 +80,7 @@ button,input,select{font:inherit}
 </style>
 </head>
 <body>
-<!-- version: v6.7 mobile-fixed-labeled-energy -->
+<!-- version: v6.6 add-form-checked -->
   <div class="top">
     <div class="topbar">
       <h1>全天总摄入</h1>
@@ -128,9 +123,125 @@ button,input,select{font:inherit}
     <div class="panel">
       <div class="phead">
         <div class="ptitle">食物详情</div>
-        <div style="display:flex;gap:8px;align-items:center"><button class="close" onclick="editFoodFromDetail()">修改</button><button class="close" onclick="closeSheet('detailSheet')">关闭</button></div>
+        <button class="close" onclick="closeSheet('detailSheet')">关闭</button>
       </div>
       <div id="detailLines" class="detail-lines"></div>
+    </div>
+  </div>
+
+  <div id="itemSheet" class="sheet">
+    <div class="panel">
+      <div class="phead">
+        <div class="ptitle">编辑食物</div>
+        <button class="close" onclick="closeSheet('itemSheet')">关闭</button>
+      </div>
+      <div class="edit">
+        <input id="iqty" type="number" min="0" step="0.1">
+        <select id="iunit"></select>
+      </div>
+      <div class="bottom-actions">
+        <div class="row2">
+          <button class="btn btn-danger" id="delBtn">删除</button>
+          <button class="btn btn-pri" id="saveBtn">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="goalSheet" class="sheet">
+    <div class="panel">
+      <div class="phead">
+        <div class="ptitle">目标设置</div>
+        <button class="close" onclick="closeSheet('goalSheet')">关闭</button>
+      </div>
+      <div class="edit">
+        <input id="gkcal" type="number" min="0" placeholder="热量 kcal">
+        <input id="gpro" type="number" min="0" placeholder="蛋白质 g">
+        <input id="gfat" type="number" min="0" placeholder="脂肪 g">
+        <input id="gcarb" type="number" min="0" placeholder="碳水 g">
+      </div>
+      <div class="bottom-actions">
+        <div class="row2">
+          <button class="btn btn-danger" onclick="resetGoals()">重置</button>
+          <button class="btn btn-pri" onclick="saveGoals()">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  <div id="addFoodSheet" class="sheet">
+    <div class="panel">
+      <div class="phead">
+        <div class="ptitle">新增食物</div>
+        <button class="close" onclick="closeSheet('addFoodSheet')">关闭</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-item">
+          <div class="form-label">食物名称</div>
+          <input id="newFoodName" placeholder="请输入食物名称">
+        </div>
+        <div class="form-item">
+          <div class="form-label">分类</div>
+          <select id="newFoodCat"></select>
+        </div>
+        <div class="form-item">
+          <div class="form-label">基础数量</div>
+          <input id="newBaseQty" type="number" min="0" placeholder="100">
+        </div>
+        <div class="form-item">
+          <div class="form-label">基础单位</div>
+          <select id="newBaseUnit">
+            <option>g</option><option>ml</option><option>个</option><option>颗</option><option>根</option><option>盘</option><option>斤</option><option>袋</option><option>包</option><option>盒</option><option>碟</option><option>份</option><option>片</option><option>把</option><option>只</option>
+          </select>
+        </div>
+        <div class="form-item">
+          <div class="form-label">GI值</div>
+          <input id="newGI" type="number" min="0" placeholder="0">
+        </div>
+        <div class="form-item">
+          <div class="form-label">单位重量(克)</div>
+          <input id="newUnitWeight" type="number" min="0" placeholder="100">
+        </div>
+        <div class="form-item" style="grid-column:1 / -1">
+          <div class="form-label">能量</div>
+          <div class="form-row">
+            <input id="newEnergy" type="number" min="0" step="0.1" placeholder="0">
+            <select id="newEnergyUnit">
+              <option value="kj">kJ</option>
+              <option value="kcal">kcal</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-item">
+          <div class="form-label">蛋白质(g)</div>
+          <input id="newProtein" type="number" min="0" step="0.1" placeholder="0">
+        </div>
+        <div class="form-item">
+          <div class="form-label">脂肪(g)</div>
+          <input id="newFat" type="number" min="0" step="0.1" placeholder="0">
+        </div>
+        <div class="form-item" style="grid-column:1 / -1">
+          <div class="form-label">碳水(g)</div>
+          <input id="newCarb" type="number" min="0" step="0.1" placeholder="0">
+        </div>
+        <div class="form-item" style="grid-column:1 / -1">
+          <div class="form-label">配料</div>
+          <input id="newIngredients" placeholder="请输入配料">
+        </div>
+        <div class="form-item" style="grid-column:1 / -1">
+          <div class="form-label">备注</div>
+          <input id="newRemark" placeholder="请输入备注">
+        </div>
+      </div>
+      <div class="bottom-actions">
+        <div class="row2">
+          <button class="btn btn-danger" onclick="closeSheet('addFoodSheet')">取消</button>
+          <button class="btn btn-pri" onclick="saveNewFood()">保存</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -221,7 +332,6 @@ const STORAGE = 'diet-mobile-drag-v5-3';
 let editing = null;
 let drag = null;
 let currentCat = categories[0];
-let detailFoodName = '';
 
 function $(id){return document.getElementById(id)}
 function safeParse(v, fb){try{return JSON.parse(v)||fb}catch{return fb}}
@@ -340,7 +450,7 @@ function renderFoods(){
 function renderAll(){renderTop();renderMeals();renderCatTabs();renderFoods()}
 
 function closeSheet(id){$(id).classList.remove('show')}
-function openDetail(name){detailFoodName = name;
+function openDetail(name){
   const f=getFood(name);
   const lines = [
     ['食物名称', f.name],
@@ -370,65 +480,6 @@ function mealFromPoint(x,y){const el=document.elementFromPoint(x,y);const card=e
 function moveGhost(x,y){$('ghost').style.left=x+'px';$('ghost').style.top=y+'px';clearHighlights();const meal=mealFromPoint(x,y);if(meal){const card=document.querySelector(`.meal[data-meal="${meal}"]`);if(card)card.classList.add('drag-over')}}
 function startDrag(btn, touch){const name=btn.dataset.food;drag={name,btn};$('ghost').textContent=name;$('ghost').style.display='block';moveGhost(touch.clientX, touch.clientY)}
 function endDrag(x,y){if(!drag)return;const meal=mealFromPoint(x,y);$('ghost').style.display='none';clearHighlights();const name=drag.name;drag=null;if(meal)addToMeal(name, meal)}
-
-function editFoodFromDetail(){
-  const name = detailFoodName;
-  if(!name || !lookup[name]) return;
-  const f = getFood(name);
-  $('editFoodName').value = f.name || '';
-  $('editFoodCat').innerHTML = categories.map(c=>`<option value="${c}">${c}</option>`).join('');
-  $('editFoodCat').value = catOf(name);
-  $('editBaseQty').value = f.baseQty || 100;
-  $('editBaseUnit').value = f.unit || 'g';
-  $('editGI').value = f.gi || 0;
-  $('editUnitWeight').value = f.unitWeight || f.baseQty || 100;
-  $('editEnergy').value = f.nutrition?.kj || 0;
-  $('editEnergyUnit').value = 'kj';
-  $('editProtein').value = f.nutrition?.protein || 0;
-  $('editFat').value = f.nutrition?.fat || 0;
-  $('editCarb').value = f.nutrition?.carb || 0;
-  $('editIngredients').value = f.ingredients || '';
-  $('editRemark').value = f.remark || '';
-  closeSheet('detailSheet');
-  $('editFoodSheet').classList.add('show');
-}
-function saveEditFood(){
-  const oldName = detailFoodName;
-  if(!oldName || !lookup[oldName]) return;
-  const newName = ($('editFoodName').value || '').trim();
-  const newCat = $('editFoodCat').value;
-  if(!newName){ toast('请输入食物名称'); return; }
-  const oldCat = catOf(oldName);
-  const oldItem = lookup[oldName];
-  DB[oldCat] = DB[oldCat].filter(x => x.name !== oldName);
-  const newItem = {
-    name:newName,
-    baseQty:Number($('editBaseQty').value)||100,
-    unit:$('editBaseUnit').value||'g',
-    unitWeight:Number($('editUnitWeight').value)||100,
-    gi:Number($('editGI').value)||0,
-    ingredients:($('editIngredients').value||'').trim(),
-    remark:($('editRemark').value||'').trim(),
-    nutrition:{
-      kj:(($('editEnergyUnit').value||'kj')==='kcal' ? (Number($('editEnergy').value)||0)*4.184 : (Number($('editEnergy').value)||0)),
-      protein:Number($('editProtein').value)||0,
-      fat:Number($('editFat').value)||0,
-      carb:Number($('editCarb').value)||0
-    },
-    weights: oldItem.weights || {}
-  };
-  DB[newCat].unshift(newItem);
-  meals.forEach(m=>{ state.mealPlan[m].forEach(it=>{ if(it.name===oldName) it.name=newName; }); });
-  rebuildLookup(); saveCustomFoods(); persist(); renderAll(); closeSheet('editFoodSheet'); detailFoodName = newName; toast('已保存');
-}
-function deleteFoodFromEdit(){
-  const oldName = detailFoodName;
-  if(!oldName || !lookup[oldName]) return;
-  const oldCat = catOf(oldName);
-  DB[oldCat] = DB[oldCat].filter(x => x.name !== oldName);
-  meals.forEach(m=>{ state.mealPlan[m] = state.mealPlan[m].filter(it => it.name !== oldName); });
-  rebuildLookup(); saveCustomFoods(); persist(); renderAll(); closeSheet('editFoodSheet'); toast('已删除');
-}
 
 function bindFoodInteractions(){
   document.querySelectorAll('.food').forEach(btn=>{
